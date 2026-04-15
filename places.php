@@ -39,6 +39,12 @@ if(isset($_GET['add'])) {
     </nav>
 
 <h1>Places to Visit</h1>
+<form method="GET">
+    <input type="text" name="search" placeholder="Search places..." 
+           value="<?php if(isset($_GET['search'])) echo $_GET['search']; ?>">
+    
+    <button type="submit">Search</button>
+</form>
 
 <form method="GET">
     <label>Filter by Category:</label>
@@ -64,9 +70,31 @@ if(isset($_GET['category']) && $_GET['category'] != "") {
 
     $sql = "SELECT * FROM places";
 }
+?>
+
+<?php
+if(isset($_GET['search']) && $_GET['search'] != "") {
+
+    $search = mysqli_real_escape_string($conn, $_GET['search']);
+
+    $sql = "SELECT * FROM places 
+            WHERE name LIKE '%$search%' 
+            OR category LIKE '%$search%' 
+            OR description LIKE '%$search%'";
+
+} else {
+    $sql = "SELECT * FROM places";
+}
 
 $result = $conn->query($sql);
+?>
 
+<?php
+if($result->num_rows == 0) {
+    echo "<p>No places found.</p>";
+}
+?>
+<?php
 if ($result->num_rows > 0) {
     while($row = $result->fetch_assoc()) {
         echo "<div class='place'>";
