@@ -7,29 +7,31 @@ if(!isset($_SESSION['admin'])) {
 }
 
 include 'db.php';
-?>
-<?php
-include 'db.php';
 
 // ADD PLACE
 if(isset($_POST['add_place'])) {
-    $name = $_POST['name'];
-    $category = $_POST['category'];
-    $distance = $_POST['distance'];
-    $description = $_POST['description'];
+    $name = mysqli_real_escape_string($conn, $_POST['name']);
+    $category = mysqli_real_escape_string($conn,$_POST['category']);
+    $distance = mysqli_real_escape_string($conn,$_POST['distance']);
+    $description = mysqli_real_escape_string($conn,$_POST['description']);
 
     $sql = "INSERT INTO places (name, category, distance, description)
             VALUES ('$name', '$category', '$distance', '$description')";
     $conn->query($sql);
+
+    header("Location: admin.php?msg=added");
+    exit();
 }
 
 // DELETE PLACE
 if(isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $conn->query("DELETE FROM places WHERE id=$id");
+
+    header("Location: admin.php?msg=deleted");
+    exit();
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -95,6 +97,22 @@ if(isset($_GET['delete'])) {
 <div class="container">
 
 <h1>Admin Panel</h1>
+<?php
+if(isset($_GET['msg'])) {
+
+    if($_GET['msg'] == "added") {
+        echo "<p class='success'>Place added successfully!</p>";
+    }
+
+    if($_GET['msg'] == "deleted") {
+        echo "<p class='error'>Place deleted successfully!</p>";
+    }
+
+    if($_GET['msg'] == "updated") {
+        echo "<p class='success'>Place updated successfully!</p>";
+    }
+}
+?>
 
 <!-- ADD FORM -->
 <form method="POST">
@@ -142,11 +160,15 @@ while($row = $result->fetch_assoc()) {
     echo "<td>".$row['name']."</td>";
     echo "<td>".$row['category']."</td>";
     echo "<td>
-            <a href='admin.php?delete=".$row['id']."'>
-                <button class='delete-btn'>Delete</button>
-            </a>
-          </td>";
-    echo "</tr>";
+        <a href='edit.php?id=".$row['id']."'>
+            <button>Edit</button>
+        </a>
+
+        <a href='admin.php?delete=".$row['id']."'>
+            <button class='delete-btn'>Delete</button>
+        </a>
+      </td>";
+    echo  "</tr>";
 }
 ?>
 
