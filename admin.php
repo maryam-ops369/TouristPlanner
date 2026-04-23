@@ -1,3 +1,4 @@
+
 <?php
 session_start();
 
@@ -8,15 +9,21 @@ if(!isset($_SESSION['admin'])) {
 
 include 'db.php';
 
-// ADD PLACE
+// ADD PLACE (WITH IMAGE)
 if(isset($_POST['add_place'])) {
     $name = mysqli_real_escape_string($conn, $_POST['name']);
     $category = mysqli_real_escape_string($conn,$_POST['category']);
     $distance = mysqli_real_escape_string($conn,$_POST['distance']);
     $description = mysqli_real_escape_string($conn,$_POST['description']);
 
-    $sql = "INSERT INTO places (name, category, distance, description)
-            VALUES ('$name', '$category', '$distance', '$description')";
+    // IMAGE UPLOAD
+    $imageName = $_FILES['image']['name'];
+    $tempName = $_FILES['image']['tmp_name'];
+
+    move_uploaded_file($tempName, "images/" . $imageName);
+
+    $sql = "INSERT INTO places (name, category, distance, description, image)
+            VALUES ('$name', '$category', '$distance', '$description', '$imageName')";
     $conn->query($sql);
 
     header("Location: admin.php?msg=added");
@@ -89,6 +96,10 @@ if(isset($_GET['delete'])) {
         .delete-btn {
             background: red;
         }
+
+        img {
+            border-radius: 5px;
+        }
     </style>
 </head>
 
@@ -97,6 +108,7 @@ if(isset($_GET['delete'])) {
 <div class="container">
 
 <h1>Admin Panel</h1>
+
 <?php
 if(isset($_GET['msg'])) {
 
@@ -115,11 +127,11 @@ if(isset($_GET['msg'])) {
 ?>
 
 <!-- ADD FORM -->
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     <h3>Add New Place</h3>
 
     <input type="text" name="name" placeholder="Place Name" required>
-
+    
     <select name="category" required>
         <option value="">Select Category</option>
         <option>Recreational / Sightseeing</option>
@@ -137,6 +149,9 @@ if(isset($_GET['msg'])) {
 
     <textarea name="description" placeholder="Description" required></textarea>
 
+    <!-- IMAGE FIELD -->
+    <input type="file" name="image" required>
+
     <button type="submit" name="add_place">Add Place</button>
 </form>
 
@@ -148,6 +163,7 @@ if(isset($_GET['msg'])) {
     <th>ID</th>
     <th>Name</th>
     <th>Category</th>
+    <th>Image</th>
     <th>Action</th>
 </tr>
 
@@ -159,6 +175,10 @@ while($row = $result->fetch_assoc()) {
     echo "<td>".$row['id']."</td>";
     echo "<td>".$row['name']."</td>";
     echo "<td>".$row['category']."</td>";
+
+    // SHOW IMAGE
+    echo "<td><img src='images/".$row['image']."' width='80'></td>";
+
     echo "<td>
         <a href='edit.php?id=".$row['id']."'>
             <button>Edit</button>
@@ -178,4 +198,4 @@ while($row = $result->fetch_assoc()) {
 
 </body>
 </html>
-  
+
