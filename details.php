@@ -115,10 +115,15 @@ $row = $result->fetch_assoc();
 
         <div class="info-box">
 
-            <p><b>📍 Distance:</b> <?php echo $row['distance']; ?></p>
+           <p><b>📍 Distance:</b> <?php echo $row['distance']; ?></p>
 
-            <p><b>📝 Description:</b><br>
-            <?php echo $row['description']; ?></p>
+<p><b>🕒 Opening Time:</b> <?php echo $row['opening_time']; ?></p>
+
+<p><b>📝 Description:</b><br>
+<?php echo $row['description']; ?></p>
+
+<p><b>💡 Travel Tips:</b><br>
+<?php echo $row['travel_tips']; ?></p>
             <?php if(!empty($row['latitude']) && !empty($row['longitude'])) { ?>
 
     <br>
