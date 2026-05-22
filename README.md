@@ -38,6 +38,16 @@ TouristPlanner is a web-based tourist day-visit planning system developed using 
 - `index.php` - Homepage
 
 ---
+## Screenshots
+
+### Welcomepage
+![Welcomepage](images/welcome_page.png)
+
+### Homepage
+![Homepage](images/home_page.png)
+
+### Admin Dashboard
+![Admin Dashboard](images/admin_dashboard.png)
 
 ## How to Run the Project
 
